@@ -24,7 +24,6 @@ int main() {
     switch (selection) {
         case 1:
             buy();
-            main();
             break;
         case 2:
             addItems();
@@ -32,7 +31,8 @@ int main() {
     }
 }
 
-void buy() {
+
+void itemList(){
     FILE *itemsfp;
     struct items item;
     itemsfp = fopen("itemdata.txt", "r");
@@ -50,9 +50,14 @@ void buy() {
     }
 }
 
+void buy() {
+    itemList();
+    main();
+}
+
 
 void addItems(){
-    buy();
+    itemList();
     FILE *itemfp;
     int number = 0;
     struct items item;
