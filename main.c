@@ -40,10 +40,10 @@ void itemList(){
         printf("Couldn't open\n");
     } else {
         printf("\n--------------------------------------------------------------------\n");
-        printf("itemID\t\titemName\t\tprice\n");
+        printf("                 itemID\t    itemName\tprice\n");
         printf("--------------------------------------------------------------------");
         while (fread(&item, sizeof(item), 1, itemsfp)) {
-            printf("\n%d\t\t%s\t\t\t%d", item.itemID, item.itemName, item.price);
+            printf("\n                   %-10d%-12s%-6d                          ", item.itemID, item.itemName, item.price);
         }
         fclose(itemsfp);
         printf("\n--------------------------------------------------------------------\n");
