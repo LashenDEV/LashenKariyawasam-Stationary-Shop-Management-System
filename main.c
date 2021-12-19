@@ -8,20 +8,23 @@ struct items {
 };
 
 void buy();
+void itemList();
 void addItems();
 
 int main() {
     int selection;
     printf("\n\n");
-    printf("                             === WELCOME TO THE SHOP ===                                       \n");
-    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("                   === WELCOME TO THE SHOP ===                        \n");
+    printf("\n--------------------------------------------------------------------\n");
     printf("1. Buy \n");
     printf("2. Login as Admin \n");
-    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("\n--------------------------------------------------------------------\n");
+    printf("Enter your selection : ");
     scanf("%d", &selection);
     switch (selection) {
         case 1:
             buy();
+            main();
             break;
         case 2:
             addItems();
@@ -45,11 +48,11 @@ void buy() {
         fclose(itemsfp);
         printf("\n--------------------------------------------------------------------\n");
     }
-    main();
 }
 
 
 void addItems(){
+    buy();
     FILE *itemfp;
     int number = 0;
     struct items item;
