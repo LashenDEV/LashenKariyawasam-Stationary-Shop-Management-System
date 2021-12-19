@@ -45,6 +45,7 @@ void buy() {
         fclose(itemsfp);
         printf("\n--------------------------------------------------------------------\n");
     }
+    main();
 }
 
 
@@ -52,7 +53,7 @@ void addItems(){
     FILE *itemfp;
     int number = 0;
     struct items item;
-    itemfp = fopen("itemdata.txt","w");
+    itemfp = fopen("itemdata.txt","a");
 
     if(itemfp==NULL){
         printf("Couldn't open\n");
