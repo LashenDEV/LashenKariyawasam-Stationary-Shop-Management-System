@@ -93,6 +93,11 @@ main();
 
 }
 
+
+int bill(){
+    //billing function
+}
+
 int itemNo() {
     int itemID, allocated;
     printf("Enter item number:");
