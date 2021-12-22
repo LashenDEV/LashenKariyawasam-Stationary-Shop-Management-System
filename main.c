@@ -7,9 +7,20 @@ struct items {
     int price;
 };
 
+struct p_items {
+    int itemID;
+    char itemName[20];
+    int price;
+    int quantity;
+};
+
 void buy();
 
+void purchase();
+
 void itemList();
+
+int bill();
 
 int itemNo();
 
@@ -29,9 +40,9 @@ int main() {
         case 1:
             buy();
             break;
-        case 2:
-            addItems();
-            break;
+//        case 2:
+//            addItems();
+//            break;
     }
 }
 
@@ -44,11 +55,10 @@ void itemList() {
         printf("Couldn't open\n");
     } else {
         printf("\n--------------------------------------------------------------------\n");
-        printf("                 itemID\t    itemName\tprice\n");
-        printf("--------------------------------------------------------------------");
-        while (fread(&item, sizeof(item), 1, itemsfp)) {
-            printf("\n                   %-10d%-12s%-6d                          ", item.itemID, item.itemName,
-                   item.price);
+        printf("itemID\t  itemName  price\n");
+        printf("--------------------------------------------------------------------\n");
+        while (fscanf(itemsfp, "%d %s %d", &item.itemID, item.itemName, &item.price) != EOF) {
+            printf("%-10d%-10s%-10d\n", item.itemID, item.itemName, item.price);
         }
         fclose(itemsfp);
         printf("\n--------------------------------------------------------------------\n");
@@ -56,29 +66,35 @@ void itemList() {
 }
 
 void buy() {
-    itemList();
-    main();
+    int selection;
+    do {
+        purchase();
+        printf("\nSelect 0 for exit or 1 for continue");
+        scanf("%d",&selection);
+    } while (selection != 0);
+
+    bill();
+//    main();
 }
 
 
 void addItems() {
-    itemList();
     int selection = 1;
     FILE *itemfp;
-    struct items item;
-    itemfp = fopen("itemdata.txt", "a+");
+    struct p_items p_item;
+    itemfp = fopen("purchasedata.txt", "a+");
 
     if (itemfp == NULL) {
         printf("Couldn't open\n");
     } else {
         do {
-            item.itemID = itemNo();
-            printf("%d", item.itemID);
+            p_item.itemID = itemNo();
+            printf("%d", p_item.itemID);
             printf("Enter item name:");
-            scanf(" %s", &item.itemName);
+            scanf(" %s", &p_item.itemName);
             printf("Enter item price:");
-            scanf(" %d", &item.price);
-            fwrite(&item, sizeof(item), 1, itemfp);
+            scanf(" %d", &p_item.price);
+            fprintf(itemfp, "%d %s %d\n", p_item.itemID, p_item.itemName, p_item.price);
             printf("*** Add Item Successfully ***");
             printf("\nDo you want to add another Item (1)");
             printf("\nor exit(0)");
@@ -87,14 +103,14 @@ void addItems() {
     }
 
 
-fclose(itemfp);
+    fclose(itemfp);
 
-main();
+    main();
 
 }
 
 
-int bill(){
+int bill() {
     //billing function
 }
 
@@ -105,7 +121,7 @@ int itemNo() {
     FILE *itemfp;
     itemfp = fopen("itemdata.txt", "r");
     struct items item;
-    while (fread(&item, sizeof(item), 1, itemfp)) {
+    while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) != EOF) {
         if (item.itemID == itemID) {
             allocated = 1;
         }
@@ -115,4 +131,38 @@ int itemNo() {
         return itemID;
     else
         return itemNo();
+}
+
+void purchase() {
+    FILE *itemfp;
+    struct items item;
+    int sele_itm, selection, total, quan;
+    itemfp = fopen("itemdata.txt", "r");
+    FILE *p_file;
+    struct p_items p_item;
+    p_file = fopen("purchase_data.txt", "a");
+    itemList();
+    printf("Enter the item : ");
+    scanf("%d", &sele_itm);
+    if (itemfp) {
+        while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) == 3) {
+            if (item.itemID == sele_itm) {
+                printf("%s", item.itemName);
+                printf("\nEnter the quantity : ");
+                scanf("%d", &quan);
+                total = quan * item.price;
+                fprintf(p_file, "%d %s %d %d\n", item.itemID, item.itemName, item.price, quan);
+            }
+        }
+        fclose(itemfp);
+    }
+
+
+//    if (p_file == NULL) {
+//        printf("Couldn't open\n");
+//    } else {
+//
+//    }
+
+    printf("Total is %d", total);
 }
