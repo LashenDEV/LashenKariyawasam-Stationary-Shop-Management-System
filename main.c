@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 
+
 struct items {
     int itemID;
     char itemName[20];
@@ -14,6 +15,7 @@ struct p_items {
     int price;
     int quantity;
     int amount;
+    int total_amount;
 };
 
 void buy();
@@ -22,7 +24,7 @@ void purchase();
 
 void itemList();
 
-int bill();
+void bill();
 
 int itemNo();
 
@@ -41,7 +43,6 @@ int main() {
     switch (selection) {
         case 1:
             buy();
-            bill();
             break;
         case 2:
             bill();
@@ -49,7 +50,7 @@ int main() {
     }
 }
 
-
+//To display the list of items
 void itemList() {
     FILE *itemsfp;
     struct items item;
@@ -68,13 +69,10 @@ void itemList() {
     }
 }
 
+//buy function
 void buy() {
-    int selection;
-    do {
-        purchase();
-        printf("\nSelect 0 for exit or 1 for continue");
-        scanf("%d",&selection);
-    } while (selection != 0);
+    purchase();
+    bill();
 }
 
 
@@ -109,64 +107,75 @@ void buy() {
 //
 //}
 
-
-int bill() {
+//billing function
+void bill() {
+    int total_amount;
     FILE *p_file;
     struct p_items p_item;
-    p_file = fopen("purchase_data.dat", "r");
+    p_file = fopen("purchase_data.txt", "r");
     if (p_file == NULL) {
         printf("Couldn't open\n");
     } else {
-        printf("\n--------------------------------------------------------------------\n");
+        printf("\n-------------------------------------------------------\n");
         printf("itemID\t  itemName  price quantity amount\n");
-        printf("--------------------------------------------------------------------\n");
-        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity, &p_item.amount) != EOF) {
-            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price,p_item.quantity,p_item.amount);
+        printf("\n-------------------------------------------------------\n");
+        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
+                      &p_item.amount) != EOF) {
+            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price, p_item.quantity,
+                   p_item.amount);
+            total_amount = total_amount + p_item.amount;
         }
+        printf("\n-------------------------------------------------------\n");
+        printf("                        Total Amount is %d", total_amount);
         fclose(p_file);
-        printf("\n--------------------------------------------------------------------\n");
     }
 }
 
-int itemNo() {
-    int itemID, allocated;
-    printf("Enter item number:");
-    scanf(" %d", &itemID);
-    FILE *itemfp;
-    itemfp = fopen("itemdata.txt", "r");
-    struct items item;
-    while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) != EOF) {
-        if (item.itemID == itemID) {
-            allocated = 1;
-        }
-    }
-    fclose(itemfp);
-    if (allocated == 0)
-        return itemID;
-    else
-        return itemNo();
-}
+//int itemNo() {
+//    int itemID, allocated, selection;;
+//    printf("Enter item number:");
+//    scanf(" %d", &itemID);
+//    FILE *itemfp;
+//    itemfp = fopen("itemdata.txt", "r");
+//    struct items item;
+//    while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) != EOF) {
+//        if (item.itemID == itemID) {
+//            allocated = 1;
+//        }
+//    }
+//    fclose(itemfp);
+//    if (allocated == 0)
+//        return itemID;
+//    else
+//        return itemNo();
+//}
 
+//purchase handler
 void purchase() {
-    FILE *itemfp;
-    struct items item;
-    int sele_itm, selection, total, quan;
-    itemfp = fopen("itemdata.txt", "r");
+    int sele_itm, selection, amount, quan, total_amount;;
     FILE *p_file;
-    p_file = fopen("purchase_data.dat", "w");
-    itemList();
-    printf("Enter the item : ");
-    scanf("%d", &sele_itm);
-    if (itemfp) {
-        while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) == 3) {
-            if (item.itemID == sele_itm) {
-                printf("%s", item.itemName);
-                printf("\nEnter the quantity : ");
-                scanf("%d", &quan);
-                total = quan * item.price;
-                fprintf(p_file, "%d %s %d %d %d\n", item.itemID, item.itemName, item.price, quan, total);
+    p_file = fopen("purchase_data.txt", "w");
+    do {
+        FILE *itemfp;
+        struct items item;
+        itemfp = fopen("itemdata.txt", "r");
+        itemList();
+        printf("Enter the item : ");
+        scanf("%d", &sele_itm);
+        if (itemfp) {
+            while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) == 3) {
+                if (item.itemID == sele_itm) {
+                    printf("%s", item.itemName);
+                    printf("\nEnter the quantity : ");
+                    scanf("%d", &quan);
+                    amount = quan * item.price;
+                    fprintf(p_file, "%d %s %d %d %d\n", item.itemID, item.itemName, item.price, quan, amount);
+                }
             }
+            fclose(itemfp);
         }
-        fclose(itemfp);
-    }
+        printf("\nSelect 0 for exit or 1 for continue");
+        scanf("%d", &selection);
+    } while (selection != 0);
+    fclose(p_file);
 }
