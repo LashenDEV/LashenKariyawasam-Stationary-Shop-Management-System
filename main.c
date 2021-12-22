@@ -109,7 +109,7 @@ void buy() {
 
 //billing function
 void bill() {
-    int total_amount;
+    int total_amount = 0;
     FILE *p_file;
     struct p_items p_item;
     p_file = fopen("purchase_data.txt", "r");
