@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <time.h>
 
 
 struct items {
@@ -29,6 +30,8 @@ void bill();
 int itemNo();
 
 void addItems();
+
+void date();
 
 int main() {
     int selection;
@@ -113,6 +116,7 @@ void buy() {
 
 //billing function
 void bill() {
+    int rest, cash;
     int total_amount = 0;
     FILE *p_file;
     struct p_items p_item;
@@ -133,6 +137,13 @@ void bill() {
         printf("\n------------------------------------------------------\n");
         printf("\n***************** Your Bill Is Ready *****************\n");
         fclose(p_file);
+        printf("Cash                                    ");
+        scanf("%d", &cash);
+        rest = cash - total_amount ;
+        printf("-------------------------------------------------------\n");
+        printf("Balance                                 %d\n",rest);
+        date();
+        printf("\n\n");
     }
 }
 
@@ -184,4 +195,67 @@ void purchase() {
         scanf("%d", &selection);
     } while (selection != 0);
     fclose(p_file);
+}
+
+void date() 
+{
+    time_t t;
+    t = time(NULL);
+    struct tm tm = *localtime(&t);
+    int m;
+    printf("\nDate: %d-", tm.tm_mday);
+    m = tm.tm_mon+1;
+    switch(m)
+    {
+        case 1:
+            printf("Jan-");
+            break;
+        case 2:
+            printf("Feb-");
+            break;
+        case 3:
+            printf("Mar-");
+            break;
+        case 4:
+            printf("Apr-");
+            break;
+        case 5:
+            printf("May-");
+            break;
+        case 6:
+            printf("June-");
+            break;
+        case 7:
+            printf("July-");
+            break;
+        case 8:
+            printf("Aug-");
+            break;
+        case 9:
+            printf("Sep-");
+            break;
+        case 10:
+            printf("Oct-");
+            break;
+        case 11:
+            printf("Nov-");
+            break;
+        case 12:
+            printf("Dec-");
+            break;
+    }
+    printf("%d  ", tm.tm_year+1900);
+
+    
+    printf("Time: ");
+    if(tm.tm_hour>=12)
+    {
+        if(tm.tm_hour==12)
+            printf("12");
+        else
+            printf("%d", tm.tm_hour-12);
+        printf(":%d PM\n", tm.tm_min);
+    }
+    else
+        printf("%d:%d AM\n", tm.tm_hour, tm.tm_min);
 }
