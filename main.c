@@ -33,11 +33,11 @@ void addItems();
 int main() {
     int selection;
     printf("\n\n");
-    //printf("                   === Welcome to Richard Bookstore ===                        \n");
-    //printf("                             Better For You                        \n");
-    //printf("RICHARD PIERIS DISTRIBUTORS LTD.\n");
-    //printf("No.17, Yakkala Road, Gampaha.\n");
-    //printf("Tel:0334672571 Fax:0334672574\n");
+    printf("                   === Welcome to Richard Bookstore ===                        \n");
+    printf("                             Better For You                        \n");
+    printf("RICHARD PIERIS DISTRIBUTORS LTD.\n");
+    printf("No.17, Yakkala Road, Gampaha.\n");
+    printf("Tel:0334672571 Fax:0334672574\n");
     printf("\n--------------------------------------------------------------------\n");
     printf("1. Buy \n");
     printf("2. View the bill \n");
