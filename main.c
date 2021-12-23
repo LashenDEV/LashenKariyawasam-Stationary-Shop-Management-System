@@ -33,7 +33,11 @@ void addItems();
 int main() {
     int selection;
     printf("\n\n");
-    printf("                   === WELCOME TO THE SHOP ===                        \n");
+    //printf("                   === Welcome to Richard Bookstore ===                        \n");
+    //printf("                             Better For You                        \n");
+    //printf("RICHARD PIERIS DISTRIBUTORS LTD.\n");
+    //printf("No.17, Yakkala Road, Gampaha.\n");
+    //printf("Tel:0334672571 Fax:0334672574\n");
     printf("\n--------------------------------------------------------------------\n");
     printf("1. Buy \n");
     printf("2. View the bill \n");
@@ -116,20 +120,22 @@ void bill() {
     if (p_file == NULL) {
         printf("Couldn't open\n");
     } else {
+        printf("\n------------------------------------------------------ \n");
+        printf("itemID\t  itemName  price quantity  amount\n");
         printf("\n-------------------------------------------------------\n");
-        printf("itemID\t  itemName  price quantity amount\n");
-        printf("\n-------------------------------------------------------\n");
-        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
-                      &p_item.amount) != EOF) {
-            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price, p_item.quantity,
-                   p_item.amount);
+        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,&p_item.amount) != EOF) {
+            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price,  p_item.quantity,
+                p_item.amount);
             total_amount = total_amount + p_item.amount;
         }
-        printf("\n-------------------------------------------------------\n");
-        printf("                        Total Amount is %d", total_amount);
+        printf("\n------------------------------------------------------\n");
+        printf("                        Total Amount    %d", total_amount);
+        printf("\n------------------------------------------------------\n");
+        printf("\n***************** Your Bill Is Ready *****************\n");
         fclose(p_file);
     }
 }
+
 
 //int itemNo() {
 //    int itemID, allocated, selection;;
@@ -174,7 +180,7 @@ void purchase() {
             }
             fclose(itemfp);
         }
-        printf("\nSelect 0 for exit or 1 for continue");
+        printf("\nSelect 0 for exit or 1 for continue:");
         scanf("%d", &selection);
     } while (selection != 0);
     fclose(p_file);
