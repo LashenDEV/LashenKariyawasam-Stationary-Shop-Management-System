@@ -116,7 +116,7 @@ void buy() {
 
 //billing function
 void bill() {
-    int rest, cash;
+    int rest, cash, cash_add;
     int total_amount = 0;
     FILE *p_file;
     struct p_items p_item;
@@ -124,6 +124,7 @@ void bill() {
     if (p_file == NULL) {
         printf("Couldn't open\n");
     } else {
+        date();
         printf("\n------------------------------------------------------ \n");
         printf("itemID\t  itemName  price quantity  amount\n");
         printf("\n-------------------------------------------------------\n");
@@ -139,9 +140,24 @@ void bill() {
         fclose(p_file);
         printf("Cash                                    ");
         scanf("%d", &cash);
+        
+        check:
         rest = cash - total_amount ;
-        printf("-------------------------------------------------------\n");
-        printf("Balance                                 %d\n",rest);
+        
+        if (cash >= total_amount)
+        {
+            printf("-------------------------------------------------------\n");
+            printf("Balance                                 %d\n",rest);
+        }
+        else
+        {
+            printf("\nCash is not enough!\n");
+            printf("Cash                                    ");
+            scanf("%d", &cash_add);
+            cash = cash + cash_add;
+            goto check;
+        }
+        
         date();
         printf("\n\n");
     }
