@@ -8,6 +8,7 @@ struct items {
     int itemID;
     char itemName[20];
     int price;
+    int quantity;
 };
 
 struct p_items {
@@ -16,7 +17,6 @@ struct p_items {
     int price;
     int quantity;
     int amount;
-    int total_amount;
 };
 
 void buy();
@@ -66,10 +66,10 @@ void itemList() {
         printf("Couldn't open\n");
     } else {
         printf("\n--------------------------------------------------------------------\n");
-        printf("itemID\t  itemName  price\n");
+        printf("itemID\t  itemName  price  quantity\n");
         printf("--------------------------------------------------------------------\n");
-        while (fscanf(itemsfp, "%d %s %d", &item.itemID, item.itemName, &item.price) != EOF) {
-            printf("%-10d%-10s%-10d\n", item.itemID, item.itemName, item.price);
+        while (fscanf(itemsfp, "%d %s %d %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
+            printf("%-10d%-10s%-10d%-10d\n", item.itemID, item.itemName, item.price, item.quantity);
         }
         fclose(itemsfp);
         printf("\n--------------------------------------------------------------------\n");
@@ -80,6 +80,7 @@ void itemList() {
 void buy() {
     purchase();
     bill();
+    main();
 }
 
 
@@ -127,9 +128,10 @@ void bill() {
         printf("\n------------------------------------------------------ \n");
         printf("itemID\t  itemName  price quantity  amount\n");
         printf("\n-------------------------------------------------------\n");
-        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,&p_item.amount) != EOF) {
-            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price,  p_item.quantity,
-                p_item.amount);
+        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
+                      &p_item.amount) != EOF) {
+            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price, p_item.quantity,
+                   p_item.amount);
             total_amount = total_amount + p_item.amount;
         }
         printf("\n------------------------------------------------------\n");
@@ -139,9 +141,9 @@ void bill() {
         fclose(p_file);
         printf("Cash                                    ");
         scanf("%d", &cash);
-        rest = cash - total_amount ;
+        rest = cash - total_amount;
         printf("-------------------------------------------------------\n");
-        printf("Balance                                 %d\n",rest);
+        printf("Balance                                 %d\n", rest);
         date();
         printf("\n\n");
     }
@@ -169,27 +171,55 @@ void bill() {
 
 //purchase handler
 void purchase() {
-    int sele_itm, selection, amount, quan, total_amount;;
+    int sele_itm, selection, amount, quan, total_amount, f_item;
     FILE *p_file;
     p_file = fopen("purchase_data.txt", "w");
     do {
-        FILE *itemfp;
+        FILE *itemfp, *copy_itemfp;
         struct items item;
         itemfp = fopen("itemdata.txt", "r");
+        copy_itemfp = fopen("copy.txt", "a");
         itemList();
         printf("Enter the item : ");
         scanf("%d", &sele_itm);
         if (itemfp) {
-            while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) == 3) {
+            while (fscanf(itemfp, "%d %s %d %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
                 if (item.itemID == sele_itm) {
+                    f_item = 1;
                     printf("%s", item.itemName);
+                    quantity:
                     printf("\nEnter the quantity : ");
                     scanf("%d", &quan);
+                    if (quan <= item.quantity) {
+                        item.quantity = item.quantity - quan;
+                        fprintf(copy_itemfp, "%d %s %d %d\n", item.itemID, item.itemName, item.price, item.quantity);
+                    } else {
+                        printf("Sorry we have only %d items in stocks", item.quantity);
+                        goto quantity;
+                    }
                     amount = quan * item.price;
                     fprintf(p_file, "%d %s %d %d %d\n", item.itemID, item.itemName, item.price, quan, amount);
+                } else {
+                    fprintf(copy_itemfp, "%d %s %d %d\n", item.itemID, item.itemName, item.price, item.quantity);
                 }
             }
+            if (f_item == 0) {
+                printf("Item is not found");
+            }
             fclose(itemfp);
+            fclose(copy_itemfp);
+
+            itemfp = fopen("itemdata.txt", "w");
+            fclose(itemfp);
+
+            itemfp = fopen("itemdata.txt", "a");
+            copy_itemfp = fopen("copy.txt", "r");
+            while (fscanf(copy_itemfp, "%d %s %d %d\n", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF){
+                fprintf(itemfp, "%d %s %d %d\n", item.itemID, item.itemName, item.price, item.quantity);
+            }
+            fclose(itemfp);
+            fclose(copy_itemfp);
+            remove("copy.txt");
         }
         printf("\nSelect 0 for exit or 1 for continue:");
         scanf("%d", &selection);
@@ -197,16 +227,14 @@ void purchase() {
     fclose(p_file);
 }
 
-void date() 
-{
+void date() {
     time_t t;
     t = time(NULL);
     struct tm tm = *localtime(&t);
     int m;
     printf("\nDate: %d-", tm.tm_mday);
-    m = tm.tm_mon+1;
-    switch(m)
-    {
+    m = tm.tm_mon + 1;
+    switch (m) {
         case 1:
             printf("Jan-");
             break;
@@ -244,18 +272,16 @@ void date()
             printf("Dec-");
             break;
     }
-    printf("%d  ", tm.tm_year+1900);
+    printf("%d  ", tm.tm_year + 1900);
 
-    
+
     printf("Time: ");
-    if(tm.tm_hour>=12)
-    {
-        if(tm.tm_hour==12)
+    if (tm.tm_hour >= 12) {
+        if (tm.tm_hour == 12)
             printf("12");
         else
-            printf("%d", tm.tm_hour-12);
+            printf("%d", tm.tm_hour - 12);
         printf(":%d PM\n", tm.tm_min);
-    }
-    else
+    } else
         printf("%d:%d AM\n", tm.tm_hour, tm.tm_min);
 }
