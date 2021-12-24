@@ -4,3 +4,4 @@ CMakeLists.txt
 main.exe
 itemdata.txt
 purchase_data.txt
+copy.txt
