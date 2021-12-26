@@ -39,17 +39,17 @@ int getSize(const char *string);
 int main() {
     int selection;
     printf("\n\n");
-    printf("                   === Welcome to Richard Bookstore ===                        \n");
+    printf("                   === Welcome to TWELVE STORE ===                        \n");
     printf("                             Better For You                        \n");
-    printf("RICHARD PIERIS DISTRIBUTORS LTD.\n");
-    printf("No.17, Yakkala Road, Gampaha.\n");
-    printf("Tel:0334672571 Fax:0334672574\n");
+    printf("TWELVE STORE DISTRIBUTORS PVT LTD\n");
+    printf("No.17, Temple Road, Badulla.\n");
+    printf("Tel:0554672571 Fax:0554672574\n");
     printf("\n--------------------------------------------------------------------\n");
     printf("1. Buy \n");
     printf("2. View the bill \n");
     printf("3. Exit \n");
     printf("\n--------------------------------------------------------------------\n");
-    printf("Enter your selection : ");
+    printf("Enter your selection: ");
     scanf("%d", &selection);
     switch (selection) {
         case 1:
@@ -136,9 +136,10 @@ void bill() {
         while (fscanf(paidfp, "%d", &payment) != EOF) {
             paid = payment;
         }
+        printf("\n***************** Your Bill Is Ready *****************\n");
         date();
         printf("\n------------------------------------------------------ \n");
-        printf("itemID\t  itemName  price quantity  amount\n");
+        printf("itemID\t  itemName  price   quantity    amount\n");
         printf("\n-------------------------------------------------------\n");
         while (fscanf(p_file, "%d %s %f %d %f", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
                       &p_item.amount) != EOF) {
@@ -152,7 +153,6 @@ void bill() {
         printf("\n------------------------------------------------------\n");
         fclose(p_file);
         if (paid == 0) {
-            printf("\n***************** Your Bill Is Ready *****************\n");
             printf("Cash                                   :");
             scanf("%f", &cash);
             check:
@@ -172,7 +172,7 @@ void bill() {
             }
         }
         if (paid == 1) {
-            printf("\t\t\tPAID\n\t\tThank you ! Come again.");
+            printf("\t\t\tPAID\n");
             paidfp = fopen("paid.txt", "w");
             fprintf(paidfp, "%d", 0);
             fclose(paidfp);
@@ -180,6 +180,7 @@ void bill() {
             fclose(p_file);
         }
         date();
+        printf("\n\t\tThank you! Come again...");
         printf("\n\n");
     }
 
@@ -219,7 +220,7 @@ void purchase() {
         itemfp = fopen("itemdata.txt", "r");
         copy_itemfp = fopen("copy.txt", "a");
         itemList();
-        printf("Enter the item : ");
+        printf("Enter the item: ");
         scanf("%d", &sele_itm);
         if (itemfp) {
             while (fscanf(itemfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
@@ -227,7 +228,7 @@ void purchase() {
                     f_item = 1;
                     printf("%s", item.itemName);
                     quantity:
-                    printf("\nEnter the quantity : ");
+                    printf("\nEnter the quantity: ");
                     scanf("%d", &quan);
                     if (quan <= item.quantity) {
                         item.quantity = item.quantity - quan;
@@ -261,7 +262,7 @@ void purchase() {
             fclose(copy_itemfp);
             remove("copy.txt");
         }
-        printf("\nSelect 0 for exit or 1 for continue:");
+        printf("\nSelect 0 for exit or 1 for continue: ");
         scanf("%d", &selection);
     } while (selection != 0);
     fclose(p_file);
@@ -272,58 +273,58 @@ void date() {
     t = time(NULL);
     struct tm tm = *localtime(&t);
     int m;
-    printf("\nDate: %d-", tm.tm_mday);
+    printf("\nDate - %d/", tm.tm_mday);
     m = tm.tm_mon + 1;
     switch (m) {
         case 1:
-            printf("Jan-");
+            printf("Jan/");
             break;
         case 2:
-            printf("Feb-");
+            printf("Feb/");
             break;
         case 3:
-            printf("Mar-");
+            printf("Mar/");
             break;
         case 4:
-            printf("Apr-");
+            printf("Apr/");
             break;
         case 5:
-            printf("May-");
+            printf("May/");
             break;
         case 6:
-            printf("June-");
+            printf("June/");
             break;
         case 7:
-            printf("July-");
+            printf("July/");
             break;
         case 8:
-            printf("Aug-");
+            printf("Aug/");
             break;
         case 9:
-            printf("Sep-");
+            printf("Sep/");
             break;
         case 10:
-            printf("Oct-");
+            printf("Oct/");
             break;
         case 11:
-            printf("Nov-");
+            printf("Nov/");
             break;
         case 12:
-            printf("Dec-");
+            printf("Dec/");
             break;
     }
     printf("%d  ", tm.tm_year + 1900);
 
 
-    printf("Time: ");
+    printf("Time - ");
     if (tm.tm_hour >= 12) {
         if (tm.tm_hour == 12)
             printf("12");
         else
-            printf("%d", tm.tm_hour - 12);
-        printf(":%d PM\n", tm.tm_min);
+            printf("%02d", tm.tm_hour - 12);
+        printf(":%02d PM\n", tm.tm_min);
     } else
-        printf("%d:%d AM\n", tm.tm_hour, tm.tm_min);
+        printf("%02d:%02d AM\n", tm.tm_hour, tm.tm_min);
 }
 
 int getSize(const char *file_name) {
