@@ -49,7 +49,7 @@ int main() {
     printf("2. View the bill \n");
     printf("3. Exit \n");
     printf("\n--------------------------------------------------------------------\n");
-    printf("Enter your selection : ");
+    printf("Enter your selection: ");
     scanf("%d", &selection);
     switch (selection) {
         case 1:
@@ -137,9 +137,8 @@ void bill() {
             paid = payment;
         }
         printf("\n***************** Your Bill Is Ready *****************\n");
-        date();
         printf("\n------------------------------------------------------ \n");
-        printf("itemID\t  itemName  price quantity  amount\n");
+        printf("itemID\t  itemName  price   quantity    amount\n");
         printf("\n-------------------------------------------------------\n");
         while (fscanf(p_file, "%d %s %f %d %f", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
                       &p_item.amount) != EOF) {
@@ -153,7 +152,7 @@ void bill() {
         printf("\n------------------------------------------------------\n");
         fclose(p_file);
         if (paid == 0) {
-            printf("Cash                                   :");
+            printf("Cash                                    ");
             scanf("%f", &cash);
             check:
             rest = cash - total_amount;
@@ -165,7 +164,7 @@ void bill() {
                 fclose(paidfp);
             } else {
                 printf("\nCash is not enough!\n");
-                printf("Cash                                   :");
+                printf("Cash                                    ");
                 scanf("%f", &cash_add);
                 cash = cash + cash_add;
                 goto check;
@@ -220,7 +219,7 @@ void purchase() {
         itemfp = fopen("itemdata.txt", "r");
         copy_itemfp = fopen("copy.txt", "a");
         itemList();
-        printf("Enter the item : ");
+        printf("Enter the item: ");
         scanf("%d", &sele_itm);
         if (itemfp) {
             while (fscanf(itemfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
@@ -228,7 +227,7 @@ void purchase() {
                     f_item = 1;
                     printf("%s", item.itemName);
                     quantity:
-                    printf("\nEnter the quantity : ");
+                    printf("\nEnter the quantity: ");
                     scanf("%d", &quan);
                     if (quan <= item.quantity) {
                         item.quantity = item.quantity - quan;
@@ -262,7 +261,7 @@ void purchase() {
             fclose(copy_itemfp);
             remove("copy.txt");
         }
-        printf("\nSelect 0 for exit or 1 for continue:");
+        printf("\nSelect 0 for exit or 1 for continue: ");
         scanf("%d", &selection);
     } while (selection != 0);
     fclose(p_file);
@@ -273,50 +272,50 @@ void date() {
     t = time(NULL);
     struct tm tm = *localtime(&t);
     int m;
-    printf("\nDate: %d-", tm.tm_mday);
+    printf("\nDate - %d/", tm.tm_mday);
     m = tm.tm_mon + 1;
     switch (m) {
         case 1:
-            printf("Jan-");
+            printf("Jan/");
             break;
         case 2:
-            printf("Feb-");
+            printf("Feb/");
             break;
         case 3:
-            printf("Mar-");
+            printf("Mar/");
             break;
         case 4:
-            printf("Apr-");
+            printf("Apr/");
             break;
         case 5:
-            printf("May-");
+            printf("May/");
             break;
         case 6:
-            printf("June-");
+            printf("June/");
             break;
         case 7:
-            printf("July-");
+            printf("July/");
             break;
         case 8:
-            printf("Aug-");
+            printf("Aug/");
             break;
         case 9:
-            printf("Sep-");
+            printf("Sep/");
             break;
         case 10:
-            printf("Oct-");
+            printf("Oct/");
             break;
         case 11:
-            printf("Nov-");
+            printf("Nov/");
             break;
         case 12:
-            printf("Dec-");
+            printf("Dec/");
             break;
     }
     printf("%d  ", tm.tm_year + 1900);
 
 
-    printf("Time: ");
+    printf("Time - ");
     if (tm.tm_hour >= 12) {
         if (tm.tm_hour == 12)
             printf("12");
