@@ -3,20 +3,21 @@
 #include <conio.h>
 #include <time.h>
 
+int paid;
 
 struct items {
     int itemID;
     char itemName[20];
-    int price;
+    float price;
     int quantity;
 };
 
 struct p_items {
     int itemID;
     char itemName[20];
-    int price;
+    float price;
     int quantity;
-    int amount;
+    float amount;
 };
 
 void buy();
@@ -27,23 +28,26 @@ void itemList();
 
 void bill();
 
-int itemNo();
+//int itemNo();
 
-void addItems();
+//void addItems();
 
 void date();
+
+int getSize(const char *string);
 
 int main() {
     int selection;
     printf("\n\n");
-    printf("                   === Welcome to Richard Bookstore ===                        \n");
+    printf("                   === Welcome to TWELVE STORE ===                        \n");
     printf("                             Better For You                        \n");
-    printf("RICHARD PIERIS DISTRIBUTORS LTD.\n");
-    printf("No.17, Yakkala Road, Gampaha.\n");
-    printf("Tel:0334672571 Fax:0334672574\n");
+    printf("TWELVE STORE DISTRIBUTORS PVT LTD\n");
+    printf("No.17, Temple Road, Badulla.\n");
+    printf("Tel:0554672571 Fax:0554672574\n");
     printf("\n--------------------------------------------------------------------\n");
     printf("1. Buy \n");
     printf("2. View the bill \n");
+    printf("3. Exit \n");
     printf("\n--------------------------------------------------------------------\n");
     printf("Enter your selection : ");
     scanf("%d", &selection);
@@ -54,6 +58,8 @@ int main() {
         case 2:
             bill();
             break;
+        case 3:
+            exit(0);
     }
 }
 
@@ -68,8 +74,8 @@ void itemList() {
         printf("\n--------------------------------------------------------------------\n");
         printf("itemID\t  itemName  price  quantity\n");
         printf("--------------------------------------------------------------------\n");
-        while (fscanf(itemsfp, "%d %s %d %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
-            printf("%-10d%-10s%-10d%-10d\n", item.itemID, item.itemName, item.price, item.quantity);
+        while (fscanf(itemsfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
+            printf("%-10d%-10s%-10.2f%2d\n", item.itemID, item.itemName, item.price, item.quantity);
         }
         fclose(itemsfp);
         printf("\n--------------------------------------------------------------------\n");
@@ -117,51 +123,69 @@ void buy() {
 
 //billing function
 void bill() {
-    int rest, cash, cash_add;
-    int total_amount = 0;
+    int payment;
+    float cash_add, rest, cash, total_amount = 0;
     FILE *p_file;
     struct p_items p_item;
     p_file = fopen("purchase_data.txt", "r");
-    if (p_file == NULL) {
-        printf("Couldn't open\n");
+    if (getSize("purchase_data.txt") == 0) {
+        printf("\n\t\t     *** You have no unpaid bills ***\n");
     } else {
+        FILE *paidfp;
+        paidfp = fopen("paid.txt", "r");
+        while (fscanf(paidfp, "%d", &payment) != EOF) {
+            paid = payment;
+        }
+        printf("\n***************** Your Bill Is Ready *****************\n");
         date();
         printf("\n------------------------------------------------------ \n");
         printf("itemID\t  itemName  price quantity  amount\n");
         printf("\n-------------------------------------------------------\n");
-        while (fscanf(p_file, "%d %s %d %d %d", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
+        while (fscanf(p_file, "%d %s %f %d %f", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
                       &p_item.amount) != EOF) {
-            printf("%-10d%-10s%-10d%-10d%-100d\n", p_item.itemID, p_item.itemName, p_item.price, p_item.quantity,
+            printf("%-10d%-10s%-10.2f%-10d%-100.2f\n", p_item.itemID, p_item.itemName, p_item.price,
+                   p_item.quantity,
                    p_item.amount);
             total_amount = total_amount + p_item.amount;
         }
         printf("\n------------------------------------------------------\n");
-        printf("                        Total Amount    %d", total_amount);
+        printf("                        Total Amount    %.2f", total_amount);
         printf("\n------------------------------------------------------\n");
-        printf("\n***************** Your Bill Is Ready *****************\n");
         fclose(p_file);
-        printf("Cash                                    ");
-        scanf("%d", &cash);        
-        check:
-        rest = cash - total_amount ;
-        
-        if (cash >= total_amount)
-        {
-            printf("-------------------------------------------------------\n");
-            printf("Balance                                 %d\n",rest);
+        if (paid == 0) {
+            printf("Cash                                   :");
+            scanf("%f", &cash);
+            check:
+            rest = cash - total_amount;
+            if (cash >= total_amount) {
+                printf("\n-------------------------------------------------------\n");
+                printf("Balance                                 %.2f\n", rest);
+                paidfp = fopen("paid.txt", "w");
+                fprintf(paidfp, "%d", 1);
+                fclose(paidfp);
+            } else {
+                printf("\nCash is not enough!\n");
+                printf("Cash                                   :");
+                scanf("%f", &cash_add);
+                cash = cash + cash_add;
+                goto check;
+            }
         }
-        else
-        {
-            printf("\nCash is not enough!\n");
-            printf("Cash                                    ");
-            scanf("%d", &cash_add);
-            cash = cash + cash_add;
-            goto check;
+        if (paid == 1) {
+            printf("\t\t\tPAID\n");
+            paidfp = fopen("paid.txt", "w");
+            fprintf(paidfp, "%d", 0);
+            fclose(paidfp);
+            p_file = fopen("purchase_data.txt", "w");
+            fclose(p_file);
         }
-        
         date();
+        printf("\n\t\tThank you! Come again...");
         printf("\n\n");
     }
+
+    main();
+
 }
 
 
@@ -186,7 +210,8 @@ void bill() {
 
 //purchase handler
 void purchase() {
-    int sele_itm, selection, amount, quan, total_amount, f_item;
+    int sele_itm, selection, quan, f_item;
+    float amount;
     FILE *p_file;
     p_file = fopen("purchase_data.txt", "w");
     do {
@@ -198,7 +223,7 @@ void purchase() {
         printf("Enter the item : ");
         scanf("%d", &sele_itm);
         if (itemfp) {
-            while (fscanf(itemfp, "%d %s %d %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
+            while (fscanf(itemfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
                 if (item.itemID == sele_itm) {
                     f_item = 1;
                     printf("%s", item.itemName);
@@ -207,15 +232,15 @@ void purchase() {
                     scanf("%d", &quan);
                     if (quan <= item.quantity) {
                         item.quantity = item.quantity - quan;
-                        fprintf(copy_itemfp, "%d %s %d %d\n", item.itemID, item.itemName, item.price, item.quantity);
+                        fprintf(copy_itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
                     } else {
                         printf("Sorry we have only %d items in stocks", item.quantity);
                         goto quantity;
                     }
                     amount = quan * item.price;
-                    fprintf(p_file, "%d %s %d %d %d\n", item.itemID, item.itemName, item.price, quan, amount);
+                    fprintf(p_file, "%d %s %.2f %d %.2f\n", item.itemID, item.itemName, item.price, quan, amount);
                 } else {
-                    fprintf(copy_itemfp, "%d %s %d %d\n", item.itemID, item.itemName, item.price, item.quantity);
+                    fprintf(copy_itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
                 }
             }
             if (f_item == 0) {
@@ -229,8 +254,9 @@ void purchase() {
 
             itemfp = fopen("itemdata.txt", "a");
             copy_itemfp = fopen("copy.txt", "r");
-            while (fscanf(copy_itemfp, "%d %s %d %d\n", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF){
-                fprintf(itemfp, "%d %s %d %d\n", item.itemID, item.itemName, item.price, item.quantity);
+            while (fscanf(copy_itemfp, "%d %s %f %d\n", &item.itemID, item.itemName, &item.price, &item.quantity) !=
+                   EOF) {
+                fprintf(itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
             }
             fclose(itemfp);
             fclose(copy_itemfp);
@@ -295,8 +321,21 @@ void date() {
         if (tm.tm_hour == 12)
             printf("12");
         else
-            printf("%d", tm.tm_hour - 12);
-        printf(":%d PM\n", tm.tm_min);
+            printf("%02d", tm.tm_hour - 12);
+        printf(":%02d PM\n", tm.tm_min);
     } else
-        printf("%d:%d AM\n", tm.tm_hour, tm.tm_min);
+        printf("%02d:%02d AM\n", tm.tm_hour, tm.tm_min);
+}
+
+int getSize(const char *file_name) {
+    FILE *file = fopen(file_name, "r");
+
+    if (file == NULL)
+        return 0;
+
+    fseek(file, 0, SEEK_END);
+    int size = ftell(file);
+    fclose(file);
+
+    return size;
 }
