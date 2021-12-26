@@ -137,6 +137,7 @@ void bill() {
             paid = payment;
         }
         printf("\n***************** Your Bill Is Ready *****************\n");
+        date();
         printf("\n------------------------------------------------------ \n");
         printf("itemID\t  itemName  price   quantity    amount\n");
         printf("\n-------------------------------------------------------\n");
@@ -152,7 +153,7 @@ void bill() {
         printf("\n------------------------------------------------------\n");
         fclose(p_file);
         if (paid == 0) {
-            printf("Cash                                    ");
+            printf("Cash                                   :");
             scanf("%f", &cash);
             check:
             rest = cash - total_amount;
@@ -164,7 +165,7 @@ void bill() {
                 fclose(paidfp);
             } else {
                 printf("\nCash is not enough!\n");
-                printf("Cash                                    ");
+                printf("Cash                                   :");
                 scanf("%f", &cash_add);
                 cash = cash + cash_add;
                 goto check;
