@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <windows.h>
 #include <time.h>
 
 int paid;
@@ -20,6 +21,11 @@ struct p_items {
     float amount;
 };
 
+#define BLUE 1
+#define CYAN 3
+#define RED 4
+#define LIGHTCYAN 11
+
 void buy();
 
 void purchase();
@@ -36,11 +42,15 @@ void date();
 
 int getSize(const char *string);
 
+void setColor(int color);
+
 int main() {
     int selection;
+    setColor(RED);
     printf("\n\n");
     printf("                   === Welcome to TWELVE STORE ===                        \n");
     printf("                             Better For You                        \n");
+    setColor(BLUE);
     printf("TWELVE STORE DISTRIBUTORS PVT LTD\n");
     printf("No.17, Temple Road, Badulla.\n");
     printf("Tel:0554672571 Fax:0554672574\n");
@@ -71,6 +81,7 @@ void itemList() {
     if (itemsfp == NULL) {
         printf("Couldn't open\n");
     } else {
+        setColor(CYAN);
         printf("\n--------------------------------------------------------------------\n");
         printf("itemID\t  itemName  price  quantity\n");
         printf("--------------------------------------------------------------------\n");
@@ -89,129 +100,83 @@ void buy() {
     main();
 }
 
-
-//void addItems() {
-//    int selection = 1;
-//    FILE *itemfp;
-//    struct p_items p_item;
-//    itemfp = fopen("purchasedata.txt", "a+");
-//
-//    if (itemfp == NULL) {
-//        printf("Couldn't open\n");
-//    } else {
-//        do {
-//            p_item.itemID = itemNo();
-//            printf("%d", p_item.itemID);
-//            printf("Enter item name:");
-//            scanf(" %s", &p_item.itemName);
-//            printf("Enter item price:");
-//            scanf(" %d", &p_item.price);
-//            fprintf(itemfp, "%d %s %d\n", p_item.itemID, p_item.itemName, p_item.price);
-//            printf("*** Add Item Successfully ***");
-//            printf("\nDo you want to add another Item (1)");
-//            printf("\nor exit(0)");
-//            scanf("%d", &selection);
-//        } while (selection);
-//    }
-//
-//
-//    fclose(itemfp);
-//
-//    main();
-//
-//}
-
 //billing function
 void bill() {
+    setColor(LIGHTCYAN);
     int payment;
     float cash_add, rest, cash, total_amount = 0;
     FILE *p_file;
     struct p_items p_item;
     p_file = fopen("purchase_data.txt", "r");
-    if (getSize("purchase_data.txt") == 0) {
-        printf("\n\t\t     *** You have no unpaid bills ***\n");
+    if (p_file == NULL) {
+        printf("\n\nCouldn't open\n");
     } else {
-        FILE *paidfp;
-        paidfp = fopen("paid.txt", "r");
-        while (fscanf(paidfp, "%d", &payment) != EOF) {
-            paid = payment;
-        }
-        printf("\n***************** Your Bill Is Ready *****************\n");
-        date();
-        printf("\n------------------------------------------------------ \n");
-        printf("itemID\t  itemName  price   quantity    amount\n");
-        printf("\n-------------------------------------------------------\n");
-        while (fscanf(p_file, "%d %s %f %d %f", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
-                      &p_item.amount) != EOF) {
-            printf("%-10d%-10s%-10.2f%-10d%-100.2f\n", p_item.itemID, p_item.itemName, p_item.price,
-                   p_item.quantity,
-                   p_item.amount);
-            total_amount = total_amount + p_item.amount;
-        }
-        printf("\n------------------------------------------------------\n");
-        printf("                        Total Amount    %.2f", total_amount);
-        printf("\n------------------------------------------------------\n");
-        fclose(p_file);
-        if (paid == 0) {
-            printf("Cash                                   :");
-            scanf("%f", &cash);
-            check:
-            rest = cash - total_amount;
-            if (cash >= total_amount) {
-                printf("\n-------------------------------------------------------\n");
-                printf("Balance                                 %.2f\n", rest);
-                paidfp = fopen("paid.txt", "w");
-                fprintf(paidfp, "%d", 1);
-                fclose(paidfp);
-            } else {
-                printf("\nCash is not enough!\n");
-                printf("Cash                                   :");
-                scanf("%f", &cash_add);
-                cash = cash + cash_add;
-                goto check;
+        if (getSize("purchase_data.txt") == 0) {
+            printf("\n\t\t     *** You have no unpaid bills ***\n");
+        } else {
+            FILE *paidfp;
+            paidfp = fopen("paid.txt", "r");
+            while (fscanf(paidfp, "%d", &payment) != EOF) {
+                paid = payment;
             }
-        }
-        if (paid == 1) {
-            printf("\t\t\tPAID\n");
-            paidfp = fopen("paid.txt", "w");
-            fprintf(paidfp, "%d", 0);
-            fclose(paidfp);
-            p_file = fopen("purchase_data.txt", "w");
+            printf("\n***************** Your Bill Is Ready *****************\n");
+            date();
+            printf("\n------------------------------------------------------ \n");
+            printf("itemID\t  itemName  price   quantity    amount\n");
+            printf("\n-------------------------------------------------------\n");
+            while (fscanf(p_file, "%d %s %f %d %f", &p_item.itemID, p_item.itemName, &p_item.price, &p_item.quantity,
+                          &p_item.amount) != EOF) {
+                printf("%-10d%-10s%-10.2f%-10d%-100.2f\n", p_item.itemID, p_item.itemName, p_item.price,
+                       p_item.quantity,
+                       p_item.amount);
+                total_amount = total_amount + p_item.amount;
+            }
+            printf("\n------------------------------------------------------\n");
+            printf("                        Total Amount    %.2f", total_amount);
+            printf("\n------------------------------------------------------\n");
             fclose(p_file);
+            if (paid == 0) {
+                printf("Cash                                   :");
+                scanf("%f", &cash);
+                check:
+                rest = cash - total_amount;
+                if (cash >= total_amount) {
+                    printf("\n-------------------------------------------------------\n");
+                    printf("Balance                                 %.2f\n", rest);
+                    paidfp = fopen("paid.txt", "w");
+                    fprintf(paidfp, "%d", 1);
+                    fclose(paidfp);
+                } else {
+                    printf("\nCash is not enough!\n");
+                    printf("Cash                                   :");
+                    scanf("%f", &cash_add);
+                    cash = cash + cash_add;
+                    goto check;
+                }
+            }
+            if (paid == 1) {
+                setColor(RED);
+                printf("\t\t\tPAID\n");
+                setColor(LIGHTCYAN);
+                paidfp = fopen("paid.txt", "w");
+                fprintf(paidfp, "%d", 0);
+                fclose(paidfp);
+                p_file = fopen("purchase_data.txt", "w");
+                fclose(p_file);
+            }
+            date();
+            printf("\n\t\tThank you! Come again...");
+            printf("\n\n");
         }
-        date();
-        printf("\n\t\tThank you! Come again...");
-        printf("\n\n");
     }
-
     main();
 
 }
 
-
-//int itemNo() {
-//    int itemID, allocated, selection;;
-//    printf("Enter item number:");
-//    scanf(" %d", &itemID);
-//    FILE *itemfp;
-//    itemfp = fopen("itemdata.txt", "r");
-//    struct items item;
-//    while (fscanf(itemfp, "%d %s %d", &item.itemID, item.itemName, &item.price) != EOF) {
-//        if (item.itemID == itemID) {
-//            allocated = 1;
-//        }
-//    }
-//    fclose(itemfp);
-//    if (allocated == 0)
-//        return itemID;
-//    else
-//        return itemNo();
-//}
-
 //purchase handler
 void purchase() {
     int sele_itm, selection, quan, f_item;
-    float amount;
+    float amount, total;
     FILE *p_file;
     p_file = fopen("purchase_data.txt", "w");
     do {
@@ -262,6 +227,8 @@ void purchase() {
             fclose(copy_itemfp);
             remove("copy.txt");
         }
+        total = total+amount;
+        printf("Total upto now %.2f",total);
         printf("\nSelect 0 for exit or 1 for continue: ");
         scanf("%d", &selection);
     } while (selection != 0);
@@ -338,4 +305,10 @@ int getSize(const char *file_name) {
     fclose(file);
 
     return size;
+}
+
+void setColor(int color) {
+    HANDLE hConsole;
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
 }
