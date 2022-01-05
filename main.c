@@ -83,6 +83,7 @@ void itemList() {
     // Check whether the file is present or not
     if (itemsfp == NULL) {
         printf("Couldn't open\n");
+        exit(0);
     } else {
         setColor(CYAN);
         printf("\n--------------------------------------------------------------------\n");
