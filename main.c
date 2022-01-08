@@ -50,16 +50,16 @@ int main() {
     setColor(BLUE);
     //Menu for user
     printf("\n\n");
-    printf("                   === Welcome to TWELVE STORE ===                        \n");
-    printf("                             Better For You                        \n");
+    printf("             === Welcome to TWELVE STORE ===             \n");
+    printf("                       Better For You                    \n");
     printf("TWELVE STORE DISTRIBUTORS PVT LTD\n");
     printf("No.17, Temple Road, Badulla.\n");
     printf("Tel:0554672571 Fax:0554672574\n");
-    printf("\n--------------------------------------------------------------------\n");
+    printf("\n-------------------------------------------------------\n");
     printf("1. Buy \n");
     printf("2. View the bill \n");
     printf("3. Exit \n");
-    printf("\n--------------------------------------------------------------------\n");
+    printf("\n-------------------------------------------------------\n");
     printf("Enter your selection: ");
     scanf("%d", &selection);
     //Take users selection
@@ -86,14 +86,14 @@ void itemList() {
         exit(0);
     } else {
         setColor(CYAN);
-        printf("\n--------------------------------------------------------------------\n");
+        printf("\n-------------------------------------------------------\n");
         printf("itemID\t  itemName  price  quantity\n");
-        printf("--------------------------------------------------------------------\n");
+        printf("\n-------------------------------------------------------\n");
         while (fscanf(itemsfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
             printf("%-10d%-10s%-10.2f%2d\n", item.itemID, item.itemName, item.price, item.quantity);
         }
         fclose(itemsfp);
-        printf("\n--------------------------------------------------------------------\n");
+        printf("\n-------------------------------------------------------\n");
     }
 }
 
@@ -129,10 +129,17 @@ void bill() {
                 paid = payment;
             }
             //Bill preview
+            printf("\n\n");
+            printf("             === Welcome to TWELVE STORE ===             \n");
+            printf("                       Better For You                    \n");
+            printf("TWELVE STORE DISTRIBUTORS PVT LTD\n");
+            printf("No.17, Temple Road, Badulla.\n");
+            printf("Tel:0554672571 Fax:0554672574\n");
+            printf("\n-------------------------------------------------------\n");
             printf("\n***************** Your Bill Is Ready *****************\n");
             //Calling the date function
             date();
-            printf("\n------------------------------------------------------ \n");
+            printf("\n-------------------------------------------------------\n");
             printf("itemID\t  itemName  price   quantity    amount\n");
             printf("\n-------------------------------------------------------\n");
             //Show purchased items, price, quantity and amount.
