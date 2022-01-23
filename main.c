@@ -108,6 +108,89 @@ void buy() {
     main();
 }
 
+
+//purchase handler
+void purchase() {
+    int sele_itm, selection, quan, f_item;
+    float amount, total;
+    FILE *p_file, *paidfp;
+    p_file = fopen("purchase_data.txt", "w");
+    //reset the payment file
+    paidfp = fopen("paid.txt", "w");
+    fprintf(paidfp, "%d", 0);
+    fclose(paidfp);
+    do {
+        FILE *itemfp, *copy_itemfp;
+        struct items item;
+        //itemlist read mode
+        sele_itm:
+        itemfp = fopen("itemdata.txt", "r");
+        copy_itemfp = fopen("copy.txt", "w");
+        itemList();
+
+        printf("Enter the item: ");
+        scanf("%d", &sele_itm);
+        f_item = 0;
+        if (itemfp) {
+            while (fscanf(itemfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
+                if (item.itemID == sele_itm) {
+                    f_item = 1;
+                    printf("%s", item.itemName);
+                    quantity:
+                    printf("\nEnter the quantity: ");
+                    scanf("%d", &quan);
+                    if (quan <= item.quantity) {
+                        item.quantity = item.quantity - quan;
+                        //Update file for quantity
+                        fprintf(copy_itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
+                    } else {
+                        printf("Sorry we have only %d items in stocks", item.quantity);
+                        goto quantity;
+                    }
+                    amount = quan * item.price;
+                    fprintf(p_file, "%d %s %.2f %d %.2f\n", item.itemID, item.itemName, item.price, quan, amount);
+                } else {
+                    //Append item to copy.txt
+                    fprintf(copy_itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
+                }
+            }
+            if (f_item == 0) {
+                setColor(RED);
+                printf("\nItem is not found\n");
+                setColor(CYAN);
+                goto sele_itm;
+            }
+            fclose(itemfp);
+            fclose(copy_itemfp);
+
+            //open itemdata.txt in write mode and copy.txt in read mode
+            itemfp = fopen("itemdata.txt", "w");
+            copy_itemfp = fopen("copy.txt", "r");
+            while (fscanf(copy_itemfp, "%d %s %f %d\n", &item.itemID, item.itemName, &item.price, &item.quantity) !=
+                   EOF) {
+                //copy the copy.txt into itemdata.txt
+                fprintf(itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
+            }
+            fclose(itemfp);
+            fclose(copy_itemfp);
+            remove("copy.txt");
+        }
+        total = total + amount;
+        printf("Total upto now %.2f", total);
+        sel:
+        printf("\nSelect 0 for exit or 1 for continue: ");
+        scanf("%d", &selection);
+        if (selection > 1) {
+            setColor(RED);
+            printf("\nInvalid selection");
+            setColor(CYAN);
+            goto sel;
+        }
+    } while (selection != 0);
+    fclose(p_file);
+}
+
+
 //billing function
 void bill() {
     setColor(LIGHTCYAN);
@@ -195,86 +278,6 @@ void bill() {
     main();
 }
 
-//purchase handler
-void purchase() {
-    int sele_itm, selection, quan, f_item;
-    float amount, total;
-    FILE *p_file, *paidfp;
-    p_file = fopen("purchase_data.txt", "w");
-    //reset the payment file
-    paidfp = fopen("paid.txt", "w");
-    fprintf(paidfp, "%d", 0);
-    fclose(paidfp);
-    do {
-        FILE *itemfp, *copy_itemfp;
-        struct items item;
-        //itemlist read mode
-        sele_itm:
-        itemfp = fopen("itemdata.txt", "r");
-        copy_itemfp = fopen("copy.txt", "w");
-        itemList();
-
-        printf("Enter the item: ");
-        scanf("%d", &sele_itm);
-        f_item = 0;
-        if (itemfp) {
-            while (fscanf(itemfp, "%d %s %f %d", &item.itemID, item.itemName, &item.price, &item.quantity) != EOF) {
-                if (item.itemID == sele_itm) {
-                    f_item = 1;
-                    printf("%s", item.itemName);
-                    quantity:
-                    printf("\nEnter the quantity: ");
-                    scanf("%d", &quan);
-                    if (quan <= item.quantity) {
-                        item.quantity = item.quantity - quan;
-                        //Update file for quantity
-                        fprintf(copy_itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
-                    } else {
-                        printf("Sorry we have only %d items in stocks", item.quantity);
-                        goto quantity;
-                    }
-                    amount = quan * item.price;
-                    fprintf(p_file, "%d %s %.2f %d %.2f\n", item.itemID, item.itemName, item.price, quan, amount);
-                } else {
-                    //Append item to copy.txt
-                    fprintf(copy_itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
-                }
-            }
-            if (f_item == 0) {
-                setColor(RED);
-                printf("\nItem is not found\n");
-                setColor(CYAN);
-                goto sele_itm;
-            }
-            fclose(itemfp);
-            fclose(copy_itemfp);
-
-            //open itemdata.txt in write mode and copy.txt in read mode
-            itemfp = fopen("itemdata.txt", "w");
-            copy_itemfp = fopen("copy.txt", "r");
-            while (fscanf(copy_itemfp, "%d %s %f %d\n", &item.itemID, item.itemName, &item.price, &item.quantity) !=
-                   EOF) {
-                //copy the copy.txt into itemdata.txt
-                fprintf(itemfp, "%d %s %.2f %d\n", item.itemID, item.itemName, item.price, item.quantity);
-            }
-            fclose(itemfp);
-            fclose(copy_itemfp);
-            remove("copy.txt");
-        }
-        total = total + amount;
-        printf("Total upto now %.2f", total);
-        sel:
-        printf("\nSelect 0 for exit or 1 for continue: ");
-        scanf("%d", &selection);
-        if (selection > 1) {
-            setColor(RED);
-            printf("\nInvalid selection");
-            setColor(CYAN);
-            goto sel;
-        }
-    } while (selection != 0);
-    fclose(p_file);
-}
 
 //Date function
 void date() {
