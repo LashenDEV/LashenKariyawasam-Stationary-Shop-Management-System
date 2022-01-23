@@ -66,6 +66,7 @@ int main() {
     switch (selection) {
         case 1:
             itemList();
+            main();
             break;
         case 2:
             buy();
