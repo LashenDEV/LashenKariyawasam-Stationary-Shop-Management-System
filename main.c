@@ -248,9 +248,7 @@ void purchase() {
             }
             fclose(itemfp);
             fclose(copy_itemfp);
-            //clear itemdata.txt
-            itemfp = fopen("itemdata.txt", "w");
-            fclose(itemfp);
+
             //open itemdata.txt in write mode and copy.txt in read mode
             itemfp = fopen("itemdata.txt", "w");
             copy_itemfp = fopen("copy.txt", "r");
