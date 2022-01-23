@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <windows.h>
 #include <time.h>
 
@@ -56,21 +55,25 @@ int main() {
     printf("No.17, Temple Road, Badulla.\n");
     printf("Tel:0554672571 Fax:0554672574\n");
     printf("\n-------------------------------------------------------\n");
-    printf("1. Buy \n");
-    printf("2. View the bill \n");
-    printf("3. Exit \n");
+    printf("1. Item list \n");
+    printf("2. Buy \n");
+    printf("3. View the bill \n");
+    printf("4. Exit \n");
     printf("\n-------------------------------------------------------\n");
     printf("Enter your selection: ");
     scanf("%d", &selection);
     //Take users selection
     switch (selection) {
         case 1:
-            buy();
+            itemList();
             break;
         case 2:
-            bill();
+            buy();
             break;
         case 3:
+            bill();
+            break;
+        case 4:
             exit(0);
     }
 }
@@ -180,9 +183,6 @@ void bill() {
                 setColor(RED);
                 printf("\t\t\tPAID\n");
                 setColor(LIGHTCYAN);
-//                paidfp = fopen("paid.txt", "w");
-//                fprintf(paidfp, "%d", 0);
-//                fclose(paidfp);
                 p_file = fopen("purchase_data.txt", "w");
                 fclose(p_file);
             }
